@@ -1,0 +1,19 @@
+{
+    "C_Cpp.default.includePath": [
+        "/opt/arduino-1.8.12/hardware/espressif/esp32/tools/sdk/include/**",
+        "/opt/arduino-1.8.12/hardware/espressif/esp32/cores/esp32/*",
+        "/opt/arduino-1.8.12/hardware/espressif/esp32/variants/esp32",
+        "/opt/arduino-1.8.12/hardware/espressif/esp32/libraries/**"
+    ],
+    "files.associations": {
+        "array": "cpp",
+        "*.tcc": "cpp",
+        "algorithm": "cpp",
+        "random": "cpp",
+        "numeric": "cpp",
+        "controller.h": "c",
+        "string.h": "c",
+        "descriptor.h": "c",
+        "view.h": "c"
+    }
+}
