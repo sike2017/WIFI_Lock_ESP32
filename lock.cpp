@@ -2,7 +2,7 @@
 #include "motor.h"
 #include <nvs.h>
 
-GeneralErr closeLock() {
+void closeLock() {
     Lock lock;
     nvs_handle handle;
     size_t len = sizeof(LockStoreFormat);
@@ -13,10 +13,9 @@ GeneralErr closeLock() {
     nvs_close(handle);
     clockwise(ROL_STEPS);
     Serial.println("close lock");
-    return GENERAL_OK;
 }
 
-GeneralErr openLock() {
+void openLock() {
     Lock lock;
     nvs_handle handle;
     size_t len = sizeof(LockStoreFormat);
@@ -27,5 +26,4 @@ GeneralErr openLock() {
     nvs_close(handle);
     counterClockwise(ROL_STEPS);
     Serial.println("open lock");
-    return GENERAL_OK;
 }

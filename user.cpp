@@ -24,7 +24,11 @@ GeneralErr setUser(const User *p) {
 
 GeneralErr getUserById(const UserId *p, User *dest) {
     nvs_handle handle;
-    ESP_ERROR_CHECK( nvs_open(NVS_USER_PART, NVS_READONLY, &handle) );
+    esp_err_t ret_val;
+    ret_val = nvs_open(NVS_USER_PART, NVS_READONLY, &handle);
+    if (ret_val == ESP_ERR_NVS_NOT_FOUND) {
+        return GENERAL_ERR_NVS_NOT_FOUND;
+    }
     size_t len = sizeof(dest->usf);
     char *key;
     int flag = 0;
@@ -46,9 +50,13 @@ GeneralErr getUserById(const UserId *p, User *dest) {
 
 GeneralErr getUserByKey(const char *key, User *dest) {
     nvs_handle handle;
-    ESP_ERROR_CHECK( nvs_open(NVS_USER_PART, NVS_READONLY, &handle) );
+    esp_err_t ret_val;
+    ret_val = nvs_open(NVS_USER_PART, NVS_READONLY, &handle);
+    if (ret_val == ESP_ERR_NVS_NOT_FOUND) {
+        return GENERAL_ERR_NVS_NOT_FOUND;
+    }
     size_t len = sizeof(dest->usf);
-    esp_err_t ret_val = nvs_get_blob(handle, key, &dest->usf, &len);
+    ret_val = nvs_get_blob(handle, key, &dest->usf, &len);
     nvs_close(handle);
     if (ret_val == ESP_ERR_NVS_NOT_FOUND) {
         return GENERAL_ERR_NVS_NOT_FOUND;
@@ -59,7 +67,7 @@ GeneralErr getUserByKey(const char *key, User *dest) {
 
 GeneralErr delUser(char *key) {
     nvs_handle handle;
-    ESP_ERROR_CHECK( nvs_open(NVS_USER_PART, NVS_READWRITE, &handle) )
+    ESP_ERROR_CHECK( nvs_open(NVS_USER_PART, NVS_READWRITE, &handle) );
     UserStoreFormat usf;
     usf.state = USER_DISABLED;
     memset(usf.id, 0, sizeof(UserId));

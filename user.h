@@ -2,7 +2,8 @@
 #include <Arduino.h>
 #include "general_err.h"
 #include "storage.h"
-typedef char UserId[16];
+#include "descriptor.h"
+typedef char UserId[USER_ID_SIZE];
 typedef enum {
     USER_DISABLED = 0x10,
     USER_ENABLED = 0x11
@@ -11,6 +12,7 @@ typedef enum {
 typedef struct {
     UserState state;
     UserId id;
+    char key[NVS_KEY_MAX_SIZE];
 } UserStoreFormat;
 
 typedef struct {

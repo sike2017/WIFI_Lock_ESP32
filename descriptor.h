@@ -2,13 +2,16 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define PACKAGE_SIZE 64
+#define PACKAGE_SIZE 128
 static const char * const DEFAULT_PASSWORD =  "aabbccdd";
 #define COMMAND_SIZE 1
 #define RESPONSE_HEADER_SIZE 1
 #define RESERVED_BYTES_SIZE 1
 #define LOADING_SIZE (PACKAGE_SIZE - RESERVED_BYTES_SIZE)
-
+#define CIPHERED_LENGTH_SIZE 8
+#define USER_ID_SIZE 16
+#define NVS_KEY_MAX_SIZE 16
+#define WIFI_TIME_OUT 10000 // milliseconds
 typedef struct {
     char data[PACKAGE_SIZE];
     char *reservedByte;
@@ -20,13 +23,12 @@ typedef enum {
     COMMAND_CLOSE_LOCK = 0X11,
     COMMAND_ADD_USER = 0x20,
     COMMAND_DEL_USER = 0X21,
-    COMMAND_RESET = 0x30,
+    // COMMAND_RESET = 0x30,
     COMMAND_PING = 0x40,
     COMMAND_INIT= 0x50,
-    COMMAND_GUEST_UNLOCK = 0x60,
-    COMMAND_GUEST_LOCK = 0x61,
-    COMMAND_GUEST_ADD = 0x70,
-    COMMAND_INVALID = 0xFF,    // invalid command will be turned into COMMAND_INVALID
+    COMMAND_GUEST_OPEN_LOCK = 0x60,
+    COMMAND_GUEST_CLOSE_LOCK = 0x61,
+    COMMAND_SET_WIFI = 0x70
 } CommandEnum;
 
 typedef struct {

@@ -18,7 +18,7 @@ typedef struct {
 
 #define KEY_LOCK "lock"
 
-// Close the lock. Always return GENERAL_OK.
-GeneralErr closeLock();
-// Open the lock. Always return GENERAL_OK.
-GeneralErr openLock();
+// Close the lock.
+void closeLock();
+// Open the lock.
+void openLock();

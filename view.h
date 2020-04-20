@@ -2,6 +2,9 @@
 
 #include "lock.h"
 #include "descriptor.h"
+
+#include "guest.h"
+
 typedef GeneralErr (*View)(CommandFormat *, ResponseFormat *);
 GeneralErr viewDisconnect(CommandFormat *p, ResponseFormat *rf);
 GeneralErr viewPing(CommandFormat *p, ResponseFormat *rf);
@@ -17,3 +20,9 @@ GeneralErr viewOpenLock(CommandFormat *p, ResponseFormat *rf);
 GeneralErr viewCloseLock(CommandFormat *p, ResponseFormat *rf);
 // Invalid command process.
 GeneralErr viewProcessInvalidCommand(CommandFormat *p, ResponseFormat *rf);
+// Open lock from a guest.
+GeneralErr viewGuestOpenLock(CommandFormat *p, ResponseFormat *rf);
+// Close lock from a guest.
+GeneralErr viewGuestCloseLock(CommandFormat *p, ResponseFormat *rf);
+// Set WiFi.
+GeneralErr viewSetWifi(CommandFormat *p, ResponseFormat *rf);

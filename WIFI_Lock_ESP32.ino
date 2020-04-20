@@ -7,8 +7,8 @@
 #include "descriptor.h"
 #include "motor.h"
 #include "utility.h"
-const char *ssid = "ESP32_WiFi_AP";
-const char *password = "1234567890";
+#include "ntp_time.h"
+#include "wifi_settings.h"
 int wifi_port = 2700;
 WiFiServer server(wifi_port);
 
@@ -27,17 +27,60 @@ void setup() {
         pinMode(PIN_ARRAY[i], OUTPUT);
     }
     Serial.begin(115200);
-    Serial.println("configuring WiFi AP...");
     request = (DataPak *)malloc(sizeof(DataPak));
     response = (DataPak *)malloc(sizeof(DataPak));
     initDataPak(request);
     initDataPak(response);
-    WiFi.softAP(ssid, password);
-    IPAddress myIP = WiFi.softAPIP();
-    Serial.print("AP SSID: ");
-    Serial.println(ssid);
-    Serial.print("AP IP: ");
+    wifi_mode_t mode;
+    if ( getWifiMode(&mode) == GENERAL_ERR_NVS_NOT_FOUND ) {
+        mode = WIFI_MODE_AP;
+        setWifiMode(mode);
+    }
+    WifiSetting wf;
+    IPAddress myIP;
+    switch (mode) {
+    case WIFI_MODE_AP:
+        strcpy(wf.ssid, SOFT_AP_SSID);
+        strcpy(wf.password, SOFT_AP_PASSWORD);
+        startSoftAP();
+        myIP = WiFi.softAPIP();
+        break;
+    case WIFI_MODE_STA:
+    {
+        GeneralErr result;
+        result = getWifiStaSetting(&wf);
+        if (result == GENERAL_ERR_NVS_NOT_FOUND) {
+            Serial.println("device was set to STA mode, but no wifi setting was stored in NVS");
+            setWifiMode(WIFI_MODE_AP);
+            ESP.restart(); // force abort here
+        }
+        GENERAL_ERROR_CHECK( result );
+        result = startSTA(&wf);
+        if (result == GENERAL_CONNECTION_TIME_OUT) {
+            Serial.print("connection time out\n");
+            result = getPrevWifiStaSetting(&wf);
+            if (result == GENERAL_ERR_NVS_NOT_FOUND) {
+                setWifiMode(WIFI_MODE_AP);
+                ESP.restart();
+            }
+            Serial.println("connect to the previous wifi");
+            result = startSTA(&wf);
+            if (result == GENERAL_CONNECTION_TIME_OUT) {
+                setWifiMode(WIFI_MODE_AP);
+                ESP.restart();
+            }
+        }
+        myIP = WiFi.localIP();
+        break;
+    }
+    default:
+        break;
+    }
+    Serial.print("SSID: ");
+    Serial.println(wf.ssid);
+    Serial.print("IP: ");
     Serial.println(myIP);
+    updateLocalTime();
     server.begin();
 
     result = GENERAL_OK;
@@ -67,5 +110,6 @@ void loop() {
             result = GENERAL_OK;
         }
     }
+    // Serial.printf("timestamp: %ld\n", getTimestamp());
     delay(2000);
 }

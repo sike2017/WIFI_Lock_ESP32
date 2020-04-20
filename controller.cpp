@@ -5,6 +5,19 @@
 #include "descriptor.h"
 #include <Arduino.h>
 
+const Connection CONNECTION_TABLE[CONNECTION_TABLE_SIZE] = {
+    { COMMAND_DISCONNECT, viewDisconnect },
+    { COMMAND_INIT, viewInit },
+    { COMMAND_ADD_USER, viewAddUser },
+    { COMMAND_DEL_USER, viewDelUser },
+    { COMMAND_OPEN_LOCK, viewOpenLock },
+    { COMMAND_CLOSE_LOCK, viewCloseLock },
+    { COMMAND_PING, viewPing },
+    { COMMAND_GUEST_OPEN_LOCK, viewGuestOpenLock },
+    { COMMAND_GUEST_CLOSE_LOCK, viewGuestCloseLock },
+    { COMMAND_SET_WIFI, viewSetWifi }
+};
+
 GeneralErr toDataPak(DataPak *dest, ResponseFormat *src, char *status) {
     dest->reservedByte = status;
     dest->loading[0] = src->header;
@@ -37,4 +50,3 @@ GeneralErr controllerRun(DataPak *request, DataPak *response) {
 }
 
 GeneralErr test() {return GENERAL_OK;}
-
