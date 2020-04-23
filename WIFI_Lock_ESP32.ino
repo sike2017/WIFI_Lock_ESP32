@@ -9,8 +9,11 @@
 #include "utility.h"
 #include "ntp_time.h"
 #include "wifi_settings.h"
-int wifi_port = 2700;
-WiFiServer server(wifi_port);
+#include "ota.h"
+
+uint16_t COMMAND_PORT = 2700;
+WiFiServer server(COMMAND_PORT);
+uint16_t OTA_PORT = 3232;
 
 void initDataPak(DataPak *p) {
     memset(p, 0, sizeof(DataPak));
@@ -23,9 +26,12 @@ DataPak *response;
 GeneralErr result;
 
 void setup() {
+    // set motor pin to OUTOUT
     for (int i = 0; i < PIN_NUMBER; i++) {
         pinMode(PIN_ARRAY[i], OUTPUT);
     }
+
+    // init REPL construction
     Serial.begin(115200);
     request = (DataPak *)malloc(sizeof(DataPak));
     response = (DataPak *)malloc(sizeof(DataPak));
@@ -36,6 +42,8 @@ void setup() {
         mode = WIFI_MODE_AP;
         setWifiMode(mode);
     }
+
+    // init wifi
     WifiSetting wf;
     IPAddress myIP;
     switch (mode) {
@@ -80,8 +88,16 @@ void setup() {
     Serial.println(wf.ssid);
     Serial.print("IP: ");
     Serial.println(myIP);
+
+    // update local time
     updateLocalTime();
+
+    // init service
+    initOTAservice(OTA_PORT);
+
+    // start service
     server.begin();
+    ArduinoOTA.begin();
 
     result = GENERAL_OK;
     Serial.println("Server started");
@@ -92,24 +108,16 @@ void loop() {
     if (client) {
         Serial.println("New Client");
         while (client.connected()) {
+            Serial.println("before handle");
+            ArduinoOTA.handle();
             if (client.available()) {
-                Serial.println("recv data: ");
-                Serial.println(request->data);
+                Serial.println("availiable");
                 client.readBytes((uint8_t *)(request->data), PACKAGE_SIZE);
-                Serial.println("after read");
                 result = controllerRun(request, response);
-                Serial.println("send data: ");
-                Serial.println(response->data);
                 client.write(response->data, PACKAGE_SIZE);
-                Serial.println("after write");
             }
         }
-        if (result == GENERAL_CONNECTION_DICONNECT) {
-            client.stop();
-            Serial.println("Client Disconnected");
-            result = GENERAL_OK;
-        }
     }
-    // Serial.printf("timestamp: %ld\n", getTimestamp());
+
     delay(2000);
 }

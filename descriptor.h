@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stddef.h>
-
+#define VERSION "v1_1"
 #define PACKAGE_SIZE 128
 static const char * const DEFAULT_PASSWORD =  "aabbccdd";
 #define COMMAND_SIZE 1
@@ -28,7 +28,8 @@ typedef enum {
     COMMAND_INIT= 0x50,
     COMMAND_GUEST_OPEN_LOCK = 0x60,
     COMMAND_GUEST_CLOSE_LOCK = 0x61,
-    COMMAND_SET_WIFI = 0x70
+    COMMAND_SET_WIFI = 0x70,
+    COMMAND_VERSION = 0x80
 } CommandEnum;
 
 typedef struct {

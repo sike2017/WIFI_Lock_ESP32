@@ -15,7 +15,8 @@ const Connection CONNECTION_TABLE[CONNECTION_TABLE_SIZE] = {
     { COMMAND_PING, viewPing },
     { COMMAND_GUEST_OPEN_LOCK, viewGuestOpenLock },
     { COMMAND_GUEST_CLOSE_LOCK, viewGuestCloseLock },
-    { COMMAND_SET_WIFI, viewSetWifi }
+    { COMMAND_SET_WIFI, viewSetWifi },
+    { COMMAND_VERSION, viewVersion }
 };
 
 GeneralErr toDataPak(DataPak *dest, ResponseFormat *src, char *status) {

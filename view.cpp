@@ -194,3 +194,11 @@ GeneralErr viewSetWifi(CommandFormat *p, ResponseFormat *rf) {
     setWifiMode(WIFI_MODE_STA);
     ESP.restart();
 }
+
+GeneralErr viewVersion(CommandFormat *p, ResponseFormat *rf) {
+    rf->header = RESPONSE_HEADER_OK;
+    char *version = VERSION;
+    memcpy(rf->data, version, (strlen(version) + 1));
+    
+    return GENERAL_OK;
+}

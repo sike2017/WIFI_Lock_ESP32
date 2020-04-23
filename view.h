@@ -26,3 +26,5 @@ GeneralErr viewGuestOpenLock(CommandFormat *p, ResponseFormat *rf);
 GeneralErr viewGuestCloseLock(CommandFormat *p, ResponseFormat *rf);
 // Set WiFi.
 GeneralErr viewSetWifi(CommandFormat *p, ResponseFormat *rf);
+// Get Version.
+GeneralErr viewVersion(CommandFormat *p, ResponseFormat *rf);
